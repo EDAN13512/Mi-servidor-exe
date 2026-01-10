@@ -1,27 +1,22 @@
-name: Crear EXE para Win7
-on: [push]
+name: Generar EXE
+on: [push, workflow_dispatch]
 
 jobs:
   build:
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@v3
-    - name: Set up Python 3.8
+    - name: Configurar Python
       uses: actions/setup-python@v4
       with:
-        python-python-version: '3.8.10'
-        architecture: 'x86' # x86 es más compatible con PCs viejas
-
-    - name: Instalar dependencias
+        python-version: '3.8.10'
+        architecture: 'x86'
+    - name: Instalar y Compilar
       run: |
         pip install uploadserver pyinstaller
-
-    - name: Crear EXE
-      run: |
-        pyinstaller --onefile --console lanzador.py
-
-    - name: Subir Resultado
+        pyinstaller --onefile --console --name "Servidor_Win7" lanzador.py
+    - name: Entregar
       uses: actions/upload-artifact@v3
       with:
-        name: Servidor-Windows7
-        path: dist/lanzador.exe
+        name: Resultado_EXE
+        path: dist/Servidor_Win7.exe
