@@ -1,0 +1,27 @@
+name: Crear EXE para Win7
+on: [push]
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v4
+      with:
+        python-python-version: '3.8.10'
+        architecture: 'x86' # x86 es más compatible con PCs viejas
+
+    - name: Instalar dependencias
+      run: |
+        pip install uploadserver pyinstaller
+
+    - name: Crear EXE
+      run: |
+        pyinstaller --onefile --console lanzador.py
+
+    - name: Subir Resultado
+      uses: actions/upload-artifact@v3
+      with:
+        name: Servidor-Windows7
+        path: dist/lanzador.exe
