@@ -15,13 +15,13 @@ jobs:
 
     - name: Instalar Dependencias
       run: |
-        pip install uploadserver pyinstaller==5.13.2 # Usamos una versión específica más estable
+        python -m pip install --upgrade pip
+        pip install uploadserver pyinstaller==5.13.2
 
     - name: Compilar Modo Plano
       run: |
-        # --no-prefer-redirects y --no-confirm ayudan a la compatibilidad
-        # Eliminamos la carpeta internal forzando todo al directorio raíz
-        pyinstaller --onedir --console --name "Servidor_Final" --no-prefer-redirects lanzador.py
+        # Corregido: --win-no-prefer-redirects y añadido --collect-all para forzar librerías
+        pyinstaller --onedir --console --name "Servidor_Final" --win-no-prefer-redirects --collect-all uploadserver --clean lanzador.py
 
     - name: Subir Carpeta
       uses: actions/upload-artifact@v4
