@@ -1,29 +1,30 @@
-name: Generar EXE
+name: Generar EXE Super Compatible
 on: [push, workflow_dispatch]
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: windows-2019 # Usamos una versión de Windows server más compatible
     steps:
-    - uses: actions/checkout@v4 # Actualizado a v4
+    - uses: actions/checkout@v4
     
-    - name: Verificar archivos
-      run: dir # Esto nos mostrará en el log si lanzador.py existe
-      
-    - name: Configurar Python
-      uses: actions/setup-python@v5 # Actualizado a v5
+    - name: Configurar Python 3.8
+      uses: actions/setup-python@v5
       with:
         python-version: '3.8.10'
         architecture: 'x86'
 
-    - name: Instalar y Compilar
+    - name: Instalar Dependencias
       run: |
         python -m pip install --upgrade pip
         pip install uploadserver pyinstaller
-        pyinstaller --onefile --console --name "Servidor_Win7" lanzador.py
 
-    - name: Entregar
-      uses: actions/upload-artifact@v4 # Actualizado a v4 (más estable)
+    - name: Compilar con Librerías Incluidas
+      run: |
+        # El comando --collect-all intenta meter todas las dependencias ocultas
+        pyinstaller --onefile --console --name "Servidor_Final" --collect-all uploadserver --clean lanzador.py
+
+    - name: Subir Archivo
+      uses: actions/upload-artifact@v4
       with:
-        name: Resultado_EXE
-        path: dist/Servidor_Win7.exe
+        name: EXE_Windows7_Corregido
+        path: dist/Servidor_Final.exe
