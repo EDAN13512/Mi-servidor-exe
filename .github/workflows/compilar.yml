@@ -1,4 +1,4 @@
-name: Generar Carpeta Super Compatible
+name: Generar EXE Plano Win7
 on: [push, workflow_dispatch]
 
 jobs:
@@ -15,15 +15,16 @@ jobs:
 
     - name: Instalar Dependencias
       run: |
-        pip install uploadserver pyinstaller
+        pip install uploadserver pyinstaller==5.13.2 # Usamos una versión específica más estable
 
-    - name: Compilar en modo Carpeta
+    - name: Compilar Modo Plano
       run: |
-        # Usamos --onedir en lugar de --onefile
-        pyinstaller --onedir --console --name "Servidor_Win7_Carpeta" --collect-all uploadserver lanzador.py
+        # --no-prefer-redirects y --no-confirm ayudan a la compatibilidad
+        # Eliminamos la carpeta internal forzando todo al directorio raíz
+        pyinstaller --onedir --console --name "Servidor_Final" --no-prefer-redirects lanzador.py
 
-    - name: Subir Carpeta Completa
+    - name: Subir Carpeta
       uses: actions/upload-artifact@v4
       with:
-        name: Servidor_Listo_Para_Win7
-        path: dist/Servidor_Win7_Carpeta/
+        name: Servidor_Plano_Win7
+        path: dist/Servidor_Final/
