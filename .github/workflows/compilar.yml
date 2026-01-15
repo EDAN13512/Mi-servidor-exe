@@ -1,4 +1,4 @@
-name: Generar EXE Plano Win7
+name: Generar EXE con UCRT
 on: [push, workflow_dispatch]
 
 jobs:
@@ -6,25 +6,22 @@ jobs:
     runs-on: windows-2019
     steps:
     - uses: actions/checkout@v4
-    
-    - name: Configurar Python 3.8
-      uses: actions/setup-python@v5
+    - uses: actions/setup-python@v5
       with:
         python-version: '3.8.10'
         architecture: 'x86'
 
-    - name: Instalar Dependencias
+    - name: Instalar dependencias
       run: |
-        python -m pip install --upgrade pip
         pip install uploadserver pyinstaller==5.13.2
 
-    - name: Compilar Modo Plano
+    - name: Compilar incluyendo librerías de sistema
       run: |
-        # Corregido: --win-no-prefer-redirects y añadido --collect-all para forzar librerías
-        pyinstaller --onedir --console --name "Servidor_Final" --win-no-prefer-redirects --collect-all uploadserver --clean lanzador.py
+        # Intentamos forzar la inclusión de las librerías de tiempo de ejecución de C
+        pyinstaller --onedir --console --name "Servidor_Win7_UCRT" --add-binary "C:\Windows\SysWOW64\ucrtbase.dll;." lanzador.py
 
-    - name: Subir Carpeta
+    - name: Subir
       uses: actions/upload-artifact@v4
       with:
-        name: Servidor_Plano_Win7
-        path: dist/Servidor_Final/
+        name: Servidor_Con_UCRT
+        path: dist/Servidor_Win7_UCRT/
